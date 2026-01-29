@@ -53,14 +53,20 @@ class PDFProcessor:
         """Extracts text from a scanned PDF using OCR."""
         try:
             # Verify Tesseract is accessible
-            tesseract_version = pytesseract.get_tesseract_version()
-            if not tesseract_version:
-                return ("OCR Error: Tesseract is not installed or not found in PATH. "
-                        "Please install Tesseract (https://github.com/UB-Mannheim/tesseract/wiki) "
-                        "and ensure it is added to your system PATH.")
+            # tesseract_version = pytesseract.get_tesseract_version()
+
+            # if not tesseract_version:
+            #     return ("OCR Error: Tesseract is not installed or not found in PATH. "
+            #             "Please install Tesseract (https://github.com/UB-Mannheim/tesseract/wiki) "
+            #             "and ensure it is added to your system PATH.")
             
             # Attempt to convert PDF to images using pdf2image (requires Poppler)
-            images = convert_from_path(self.file_path, dpi=300)
+            try:
+                images = convert_from_path(self.file_path, dpi=300)
+            except Exception as e:
+                raise RuntimeError(
+                    "OCR dependencies missing. Ensure Tesseract and Poppler are installed."
+                )
             full_text = ""
             for image in images:
                 preprocessed_image = self._preprocess_image_for_ocr(image)
